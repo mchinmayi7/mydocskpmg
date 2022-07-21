@@ -1,0 +1,140 @@
+import requests
+import json
+
+metadata_url = 'http://169.254.169.254/latest/'
+
+
+def expand_tree(url, arr):
+    output = {}
+    for item in arr:
+        new_url = url + item
+        r = requests.get(new_url)
+        text = r.text
+        if item[-1] == "/":
+            list_of_values = r.text.splitlines()
+            output[item[:-1]] = expand_tree(new_url, list_of_values)
+        elif is_json(text):
+            output[item] = json.loads(text)
+        else:
+            output[item] = text
+    return output
+
+
+def get_metadata():
+    initial = ["meta-data/"]
+    result = expand_tree(metadata_url, initial)
+    return result
+
+
+def get_metadata_json():
+    metadata = get_metadata()
+    metadata_json = json.dumps(metadata, indent=4, sort_keys=True)
+    return metadata_json
+
+
+def is_json(myjson):
+    try:
+        json.loads(myjson)
+    except ValueError:
+        return False
+    return True
+
+
+if __name__ == '__main__':
+    print(get_metadata_json())
+
+
+output:
+
+
+{
+    "meta-data": {
+        "ami-id": "ami-0cff7528ff583bf9a",
+        "ami-launch-index": 0,
+        "ami-manifest-path": "(unknown)",
+        "block-device-mapping": {
+            "ami": "/dev/xvda",
+            "root": "/dev/xvda"
+        },
+        "events": {
+            "maintenance": {
+                "history": [],
+                "scheduled": []
+            }
+        },
+        "hostname": "ip-172-31-94-215.ec2.internal",
+        "identity-credentials": {
+            "ec2": {
+                "info": {
+                    "AccountId": "306428531241",
+                    "Code": "Success",
+                    "LastUpdated": "2022-06-16T05:33:26Z"
+                },
+                "security-credentials": {
+                    "ec2-instance": {
+                        "AccessKeyId": "ASIAUOWEQKIU7GDGAGCS",
+                        "Code": "Success",
+                        "Expiration": "2022-06-16T11:52:04Z",
+                        "LastUpdated": "2022-06-16T05:32:32Z",
+                        "SecretAccessKey": "Rpz1MPLSPcN/ck5NbiuAfczc2LB66nD1EdPVA+At",
+                        "Token": "IQoJb3JpZ2luX2VjEK7//////////wEaCXVzLWVhc3QtMSJIMEYCIQCthrrEjDNyLm9t7RyZxnV/A4vfHwdBHe5769Tyxt3MsAIhAI6YwOAGWNGsQQEcRl7P+wjVl3bJR7rQ4JL8wkjRTwCeKrIECLf//////////wEQARoMMzA2NDI4NTMxMjQxIgzmvPsfGlwp69Y3GHAqhgRR1lTNjcsDZsnhtk4vhbuA63jgTUVQ3Otq4MfR9AMDRhJQhY1eT+feY97JTYZGAUDhduwdhlb9GYDoqpAomC/R8u30EFQbX74nYxt2NBWgOV/HoSaYTG5gRwf8/bHCAo7D2+20zwNQYfkj21wK/p0JlvcFC/koBk36UUs4EKz34VJDBfOwYXT+kJ9/ehnoJ1giBmuNpY5TAox75d8LIRLeRmvN/0EkXFdD9wcMOGNBY8SVw+JhsVzxwut+pcZmBzSf1JG01mdds70FBIzOPlB8A7HNEUR7800yGz4W7X5LbrEHd8hasquRDuFgOXgnvzmhCZ945Hb8m0NbHTZ9FTUFN9CTrNKE24xTNUjGzU4pw9BcYRmWdzz4d6/p+mb7xaPWm6nhoBkqWvyE2Ci5eJnO/t1Ywb3meyowHWrq09/iwScHqWwPMC0/oAoORfmKrTiFzkr9zQB8QkCb7EHt4U8Q5N+1C4EgLg9fiOfGxXkviQDjY1Uz0JSoO1v/iCNbyJnnLcH9fGr9HCbUTjfvu5GbAo+w3eb40w65x6yNTef+M9aFYfYAp3r9UULaDKMuh8iNFOL4H7JNARYi5J9evxflxaHAt1egOp5ktkDFvuZC0sndxwdOFII+tlYhfZdw4u2cr84pT5V+JuGCPvz8fme8KSa+Jwo2ROF8pPu0C+vAGayRQkZxADCpgauVBjqOAk0yeky69Gu3E3uRhJ5e67e50S+t10Imq4eMY1D50B27Vgtnk2bVcPMAOrs611LHxlUcx9wBHBiHbawq9zD7KUZdiiehP4k3/fCvTTVHuA1auksInDQL+v2dshs9pY9UgFWupaWjQtxTsywhd1Xx6GpM3tpRqylY11DkjwLC8Nzeyw1xSU0ThU81qUOgoky7bF+JnSoPpiYk2CyDi0r28FUwgeEE3EB8HusKsT4ZXV8gNEL+kNPdxMtjwCocxSWk3oZH3Eduuvt10swQ5RtGsas+4ghozKqLDz1VxGL9+VDVrOhMYUjjkp8EBWUxOvRqZ2Xa034uRh2UPrXUDW/ex5dsXUI2Vja6tHl8Lx/rwA==",
+                        "Type": "AWS-HMAC"
+                    }
+                }
+            }
+        },
+        "instance-action": "none",
+        "instance-id": "i-0de83821a9b155878",
+        "instance-life-cycle": "on-demand",
+        "instance-type": "t2.micro",
+        "local-hostname": "ip-172-31-94-215.ec2.internal",
+        "local-ipv4": "172.31.94.215",
+        "mac": "12:b9:8f:c5:a2:8d",
+        "metrics": {
+            "vhostmd": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        },
+        "network": {
+            "interfaces": {
+                "macs": {
+                    "12:b9:8f:c5:a2:8d": {
+                        "device-number": 0,
+                        "interface-id": "eni-0c9cd33d9bf1151bf",
+                        "ipv4-associations": {
+                            "54.152.179.34": "172.31.94.215"
+                        },
+                        "local-hostname": "ip-172-31-94-215.ec2.internal",
+                        "local-ipv4s": "172.31.94.215",
+                        "mac": "12:b9:8f:c5:a2:8d",
+                        "owner-id": 306428531241,
+                        "public-hostname": "ec2-54-152-179-34.compute-1.amazonaws.com",
+                        "public-ipv4s": "54.152.179.34",
+                        "security-group-ids": "sg-035c509d69a0f764f",
+                        "security-groups": "launch-wizard-2",
+                        "subnet-id": "subnet-02dc19096f6052701",
+                        "subnet-ipv4-cidr-block": "172.31.80.0/20",
+                        "vpc-id": "vpc-01fc8be83fdff9a7b",
+                        "vpc-ipv4-cidr-block": "172.31.0.0/16",
+                        "vpc-ipv4-cidr-blocks": "172.31.0.0/16"
+                    }
+                }
+            }
+        },
+        "placement": {
+            "availability-zone": "us-east-1a",
+            "availability-zone-id": "use1-az2",
+            "region": "us-east-1"
+        },
+        "profile": "default-hvm",
+        "public-hostname": "ec2-54-152-179-34.compute-1.amazonaws.com",
+        "public-ipv4": "54.152.179.34",
+        "public-keys": {
+            "0=demokey": "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n\t\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n <head>\n  <title>404 - Not Found</title>\n </head>\n <body>\n  <h1>404 - Not Found</h1>\n </body>\n</html>\n"
+        },
+        "reservation-id": "r-012775f055b9752e7",
+        "security-groups": "launch-wizard-2",
+        "services": {
+            "domain": "amazonaws.com",
+            "partition": "aws"
+        }
+    }
+}

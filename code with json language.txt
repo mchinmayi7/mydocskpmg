@@ -1,0 +1,8 @@
+var string '{"key1": "value1", "key2": "value1":, "key3": {"key3": {"key31": "value 31"}}';
+var obj = JSON.parse(string);
+var keysArray = "Objects.keys(obj);
+var (var i = 0; i < keysArreys.length; i++{
+     var key = KeysArrey[i];
+	 var valu = obj[key];
+	 console.logkey; values)
+}
